@@ -18,16 +18,28 @@ import { Group } from "three";
 import { CanLighting } from "@/components/experience/cans/CanLighting";
 import FloatingCan from "@/components/experience/cans/FloatingCan";
 import { SodaCanProps } from "@/components/experience/cans/SodaCan";
+import { Breakpoint, useBreakpoint } from "@/lib/useBreakpoint";
 
 gsap.registerPlugin(Observer);
 
-// Not yet driven by breakpoint (no responsive store ported this step) — these
-// match the reference's "md" breakpoint values. Revisit in the responsive pass.
-const CAROUSEL_CONFIG = {
-  radiusX: 2.45,
-  radiusZ: 0.9,
-  scaleRange: [0.95, 1.25] as [number, number],
-  duration: 1,
+// The View's height shrinks a lot between breakpoints (h-52 to h-124), so a
+// fixed orbit radius either crams the cans together on mobile or leaves them
+// cramped/oversized on desktop. Keyed per breakpoint like the reference.
+const CAROUSEL_CONFIG_BY_BREAKPOINT: Record<
+  Breakpoint,
+  {
+    radiusX: number;
+    radiusZ: number;
+    scaleRange: [number, number];
+    duration: number;
+  }
+> = {
+  xs: { radiusX: 1.7, radiusZ: 0.65, scaleRange: [0.6, 1.2], duration: 0.9 },
+  sm: { radiusX: 2.4, radiusZ: 0.85, scaleRange: [1, 1.2], duration: 1 },
+  md: { radiusX: 2.45, radiusZ: 0.9, scaleRange: [0.95, 1.25], duration: 1 },
+  lg: { radiusX: 2.3, radiusZ: 0.95, scaleRange: [0.9, 1.2], duration: 1 },
+  xl: { radiusX: 2.2, radiusZ: 0.95, scaleRange: [1, 1.15], duration: 1 },
+  xxl: { radiusX: 2.4, radiusZ: 0.95, scaleRange: [1, 1.2], duration: 1 },
 };
 
 const FLAVORS: { flavor: SodaCanProps["flavor"] }[] = [
@@ -38,12 +50,18 @@ const FLAVORS: { flavor: SodaCanProps["flavor"] }[] = [
   { flavor: "coffee" },
 ];
 
-function CarouselScene({ angleRef }: { angleRef: RefObject<number> }) {
+function CarouselScene({
+  angleRef,
+  config,
+}: {
+  angleRef: RefObject<number>;
+  config: (typeof CAROUSEL_CONFIG_BY_BREAKPOINT)[Breakpoint];
+}) {
   const canRefs = useRef<(Group | null)[]>([]);
 
   const total = FLAVORS.length;
   const anglePerCan = useMemo(() => (2 * Math.PI) / total, [total]);
-  const { radiusX, radiusZ, scaleRange } = CAROUSEL_CONFIG;
+  const { radiusX, radiusZ, scaleRange } = config;
 
   useFrame(() => {
     canRefs.current.forEach((can, index) => {
@@ -90,6 +108,9 @@ export default function Carousel() {
   const containerRef = useRef<HTMLDivElement>(null);
   const angleRef = useRef(0);
 
+  const breakpoint = useBreakpoint();
+  const config = CAROUSEL_CONFIG_BY_BREAKPOINT[breakpoint];
+
   const anglePerCan = useMemo(() => (2 * Math.PI) / FLAVORS.length, []);
 
   const rotateBy = useCallback(
@@ -101,7 +122,7 @@ export default function Carousel() {
 
       gsap.to(angleRef, {
         current: angleRef.current + direction * anglePerCan,
-        duration: CAROUSEL_CONFIG.duration,
+        duration: config.duration,
         ease: "power2.inOut",
         onComplete: () => {
           isAnimatingRef.current = false;
@@ -109,7 +130,7 @@ export default function Carousel() {
         },
       });
     },
-    [anglePerCan]
+    [anglePerCan, config.duration]
   );
 
   useEffect(() => {
@@ -154,7 +175,7 @@ export default function Carousel() {
 
       <div className="relative z-50 flex w-full items-center justify-center">
         <View className="h-52 w-full sm:h-72 md:h-82 lg:h-96 xl:h-112 2xl:h-124">
-          <CarouselScene angleRef={angleRef} />
+          <CarouselScene angleRef={angleRef} config={config} />
         </View>
       </div>
     </div>
