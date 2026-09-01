@@ -11,7 +11,7 @@ export default async function Page({ params }: PageProps) {
     "original" | "cherry" | "zero" | "lime" | "coffee";
 
   return (
-    <div className="relative w-full pt-24">
+    <div className="relative z-5 w-full pt-24">
       <HeroSingle variant={slug} />
       <Nutriments variant={slug} />
       <MatterMarquee />

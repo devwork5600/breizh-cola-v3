@@ -5,7 +5,7 @@ import ProductLime from "./components/productLime/ProductLime";
 
 export default function Home() {
   return (
-    <div className="relative w-full">
+    <div className="relative z-5 w-full">
       <Hero />
       <ProductCherry />
       <ProductLime />
