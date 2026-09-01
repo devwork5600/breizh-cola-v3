@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 
 import "./globals.css";
+import Loader from "@/components/Loader";
 import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
 
 const creamCake = localFont({
@@ -35,6 +36,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body
         className={`${poppins.variable} ${creamCake.variable} bg-primary text-secondary flex min-h-full flex-col overflow-x-hidden`}
       >
+        <Loader />
         <SmoothScrollProvider>{children}</SmoothScrollProvider>
       </body>
     </html>
