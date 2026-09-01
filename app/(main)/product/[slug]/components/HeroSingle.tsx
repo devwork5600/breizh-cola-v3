@@ -1,21 +1,23 @@
-type Variant = "original" | "cherry" | "zero" | "lime" | "coffee";
+"use client";
 
-const accentClass: Record<Variant, string> = {
-  original: "text-secondary",
-  zero: "text-secondary",
-  cherry: "text-cherry",
-  lime: "text-lime",
-  coffee: "text-coffee",
-};
+import { View } from "@react-three/drei";
 
-export default function HeroSingle({ variant }: { variant: Variant }) {
+import ProductIntro from "./ProductIntro";
+import ProductTitle from "./ProductTittle";
+import Scene from "./Scene";
+
+export default function HeroSingle({
+  variant,
+}: {
+  variant: "original" | "cherry" | "zero" | "lime" | "coffee";
+}) {
   return (
-    <section className="flex h-screen w-full items-center justify-center">
-      <h1
-        className={`font-cream-cake text-5xl capitalize ${accentClass[variant]}`}
-      >
-        Breizh Cola {variant}
-      </h1>
-    </section>
+    <div className="hero-single relative">
+      <View className="hero-single-scene pointer-events-none sticky top-0 z-30 h-screen w-full">
+        <Scene flavor={variant} />
+      </View>
+      <ProductTitle name={variant} />
+      <ProductIntro variant={variant} />
+    </div>
   );
 }
