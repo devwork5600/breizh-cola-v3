@@ -1,28 +1,28 @@
 "use client";
 
+import { MenuIcon } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
 
 import { useBubbleStore } from "@/store/useBubbleStore";
+import { useMenuStore } from "@/store/useMenuStore";
 
 export default function Header() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const togglePlay = useBubbleStore((state) => state.togglePlay);
+  const openMenu = useMenuStore((state) => state.openMenu);
 
   return (
     <nav className="bg-primary text-secondary font-poppins fixed top-0 left-0 z-50 flex h-20 w-full items-center justify-between p-4 uppercase">
       <div className="flex items-center gap-3">
         <button
           className="lg:hidden"
-          onClick={() => setIsMenuOpen((v) => !v)}
-          aria-label={isMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
-          aria-expanded={isMenuOpen}
+          onClick={openMenu}
+          aria-label="Ouvrir le menu"
         >
-          Menu
+          <MenuIcon size={28} />
         </button>
         <ul className="hidden gap-3 text-xl font-bold lg:flex">
           <li className="underline-effect">
-            <Link href="/product/original">Produits</Link>
+            <button onClick={openMenu}>Produits</button>
           </li>
         </ul>
       </div>
@@ -43,14 +43,6 @@ export default function Header() {
           Bulles
         </button>
       </div>
-
-      {isMenuOpen && (
-        <div className="bg-primary absolute top-full left-0 flex w-full flex-col gap-4 p-4 text-xl font-bold lg:hidden">
-          <Link href="/product/original" onClick={() => setIsMenuOpen(false)}>
-            Produits
-          </Link>
-        </div>
-      )}
     </nav>
   );
 }
