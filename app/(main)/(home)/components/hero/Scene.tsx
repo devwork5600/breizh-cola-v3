@@ -53,6 +53,13 @@ export default function Scene({ onReady }: { onReady?: () => void }) {
     () => {
       if (!can1Ref.current || !can2Ref.current || !can3Ref.current) return;
 
+      // can1 stays invisible until the ready-gated intro effect below takes
+      // over (see its comment for why that's delayed a frame past mount).
+      // Without this, can1 renders at its default position/scale for that
+      // one frame - a visible flash before it jumps to its real off-screen
+      // starting point.
+      gsap.set(can1Ref.current.scale, { x: 0, y: 0, z: 0 });
+
       gsap.set(can2Ref.current.position, {
         ...config.scrollCan2.from.position,
       });
