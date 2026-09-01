@@ -1,26 +1,39 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --font-poppins: var(--font-poppins);
+  --font-cream-cake: var(--font-cream-cake);
+
+  --color-primary: #591420;
+  --color-secondary: #f5ddd2;
+  --color-cherry: #a855f7;
+  --color-lime: #65a30d;
+  --color-coffee: #92400e;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@layer utilities {
+  .text-stroke-primary {
+    -webkit-text-stroke: 2px #591420;
+  }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  .text-stroke-secondary {
+    -webkit-text-stroke: 2px #f5ddd2;
+  }
+
+  .text-stroke-secondary-1 {
+    -webkit-text-stroke: 1px #f5ddd2;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+.underline-effect {
+  @apply relative cursor-pointer;
+}
+
+.underline-effect::after {
+  content: "";
+  @apply bg-secondary absolute bottom-0 left-0 h-0.5 w-0 transition-all;
+}
+
+.underline-effect:hover::after {
+  @apply w-full;
 }
