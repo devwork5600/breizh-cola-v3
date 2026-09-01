@@ -2,7 +2,11 @@
 
 import { View } from "@react-three/drei";
 
+import PinnedReveal from "./pin-reveal";
 import Scene from "./Scene";
+
+const HERO_DESCRIPTION =
+  "Breizh Cola incarne un esprit libre et breton, une boisson de caractère née à l'Ouest, pour ceux qui recherchent authenticité, fraîcheur et goût.";
 
 const heroLines = [
   ["breizh", "cola"],
@@ -36,6 +40,7 @@ export default function Hero() {
           ))}
         </div>
       </div>
+      <PinnedReveal className="text-xl" text={HERO_DESCRIPTION} />
     </div>
   );
 }
