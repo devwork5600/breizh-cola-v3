@@ -3,8 +3,11 @@
 import Link from "next/link";
 import { useState } from "react";
 
+import { useBubbleStore } from "@/store/useBubbleStore";
+
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const togglePlay = useBubbleStore((state) => state.togglePlay);
 
   return (
     <nav className="bg-primary text-secondary font-poppins fixed top-0 left-0 z-50 flex h-20 w-full items-center justify-between p-4 uppercase">
@@ -32,7 +35,11 @@ export default function Header() {
       </Link>
 
       <div className="flex items-center">
-        <button type="button" className="text-xl font-bold">
+        <button
+          type="button"
+          onClick={togglePlay}
+          className="text-xl font-bold"
+        >
           Bulles
         </button>
       </div>
