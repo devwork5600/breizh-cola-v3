@@ -4,6 +4,7 @@ import ViewCanvas from "@/components/experience/cans/ViewCanvas";
 import SideMenu from "@/components/experience/sideMenu/SideMenu";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
+import Social from "@/components/layout/social/Social";
 
 export default function MainLayout({
   children,
@@ -18,6 +19,7 @@ export default function MainLayout({
       <BubblesView />
       <BackgroundCanvas />
       {children}
+      <Social />
       <Footer />
     </>
   );
