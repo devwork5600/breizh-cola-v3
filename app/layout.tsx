@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 
 import "./globals.css";
 import Loader from "@/components/Loader";
+import { ResponsiveProvider } from "@/components/providers/ResponsiveProvider";
 import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
 import { SITE_URL } from "@/lib/seo";
 
@@ -89,6 +90,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body
         className={`${poppins.variable} ${creamCake.variable} bg-primary text-secondary flex min-h-full flex-col overflow-x-hidden`}
       >
+        <ResponsiveProvider />
         <Loader />
         <SmoothScrollProvider>{children}</SmoothScrollProvider>
       </body>
