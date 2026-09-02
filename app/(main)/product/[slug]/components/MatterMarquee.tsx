@@ -3,23 +3,17 @@
 import Matter from "matter-js";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-// Responsive radius scale factors by breakpoint, keyed to Tailwind's default
-// min-widths (checked widest-first).
-const RADIUS_SCALE_FACTORS: [number, number][] = [
-  [1536, 4], // 2xl
-  [1280, 5.5], // xl
-  [1024, 6], // lg
-  [768, 6], // md
-  [640, 8], // sm
-  [0, 8], // xs
-];
+import { Breakpoint } from "@/lib/useBreakpoint";
+import { useResponsiveStore } from "@/store/useResponsiveStore";
 
-const getRadiusScale = () => {
-  const width = window.innerWidth;
-  return (
-    RADIUS_SCALE_FACTORS.find(([min]) => width >= min)?.[1] ??
-    RADIUS_SCALE_FACTORS[RADIUS_SCALE_FACTORS.length - 1][1]
-  );
+// Responsive radius scale factors by breakpoint.
+const RADIUS_SCALE_FACTORS: Record<Breakpoint, number> = {
+  xs: 8,
+  sm: 8,
+  md: 6,
+  lg: 6,
+  xl: 5.5,
+  xxl: 4,
 };
 
 // The two cannons are smaller than the original single one; bubbles are
@@ -103,6 +97,17 @@ export default function MatterMarquee() {
 
   const [loaded, setLoaded] = useState(false);
   const [isFull, setIsFull] = useState(false);
+
+  const breakpoint = useResponsiveStore((s) => s.breakpoint);
+  // Deliberately not memoized on [] like most getters here: a new function
+  // identity per breakpoint is what re-triggers the init effect below and
+  // rebuilds the engine from scratch on a breakpoint change, clearing out
+  // any balls that were fired - matching the reference's reset-on-resize
+  // behavior instead of just repositioning the walls/cans in place.
+  const getRadiusScale = useCallback(
+    () => RADIUS_SCALE_FACTORS[breakpoint] ?? RADIUS_SCALE_FACTORS.sm,
+    [breakpoint]
+  );
 
   const sponsorImages = [
     "/sponsorts/music/t1.png",
@@ -258,7 +263,7 @@ export default function MatterMarquee() {
       }, 60);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [loaded, isFull]
+    [loaded, getRadiusScale, isFull]
   );
 
   // 3. INIT MATTER ENGINE
@@ -538,7 +543,7 @@ export default function MatterMarquee() {
         renderRef.current?.canvas.remove();
       }
     };
-  }, [loaded]);
+  }, [loaded, getRadiusScale]);
 
   return (
     <div className="relative z-999 flex h-[70vh] w-full justify-center overflow-hidden bg-transparent lg:h-screen">
