@@ -24,8 +24,11 @@ const CAN_LAYOUT_BY_BREAKPOINT: Record<
   sm: { scale: 0.75, position: [-0.3, -0.4, 0] },
   md: { scale: 0.75, position: [-0.3, -0.5, 0] },
   lg: { scale: 0.75, position: [-0.3, -0.5, 0] },
-  xl: { scale: 0.9, position: [1.5, -0.35, 0] },
-  xxl: { scale: 0.95, position: [1.6, -0.35, 0] },
+  // Mirrored from ProductCherry's xl/xxl x/y: this section's text sits on
+  // the right (see ProductLime.tsx's xl:justify-end), so the can needs to
+  // be on the left instead, at the same height as Cherry's.
+  xl: { scale: 0.9, position: [-1.5, 0.35, 0] },
+  xxl: { scale: 0.95, position: [-1.6, 0.35, 0] },
 };
 
 export default function Scene() {
