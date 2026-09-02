@@ -139,6 +139,11 @@ export default function Carousel() {
     const observer = Observer.create({
       target: containerRef.current,
       type: "touch,pointer",
+      // Without this, a click on the arrow buttons still registers as a
+      // pointerdown/pointerup pair on the container - any tiny mouse drift
+      // between the two gets picked up as a swipe, racing the button's own
+      // onClick and occasionally rotating the opposite direction.
+      ignore: "button",
       onLeft: () => rotateBy(-1),
       onRight: () => rotateBy(1),
     });
