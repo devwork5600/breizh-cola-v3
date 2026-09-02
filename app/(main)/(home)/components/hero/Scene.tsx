@@ -36,7 +36,6 @@ export default function Scene({ onReady }: { onReady?: () => void }) {
   const setBubblesPlaying = useBubbleStore((s) => s.setPlaying);
 
   const [ready, setReady] = useState(false);
-  const introQueuedRef = useRef(false);
 
   // Runs synchronously before paint, outside any GSAP context, purely to
   // hide all 3 cans at their untouched R3F defaults for the one frame
@@ -108,50 +107,63 @@ export default function Scene({ onReady }: { onReady?: () => void }) {
           y: config.finalCan1.scale,
           z: config.finalCan1.scale,
         });
-      } else if (!introQueuedRef.current) {
-        // Guarded so this only ever runs once per page load. Without the
-        // guard, a resize firing (resizeCount ticks on every one, not just
+      } else {
+        const tl = createIntroTimeline();
+
+        // Guarded by id so this only ever queues once. Without it, a
+        // resize firing (resizeCount ticks on every one, not just
         // breakpoint crossings) before the intro's ~1s tween has finished
-        // re-enters this branch while introPlayed is still false and
-        // queues ANOTHER copy of these tweens onto the *same* shared,
+        // re-enters this branch while introPlayed is still false and would
+        // queue ANOTHER copy of these tweens onto the *same* shared,
         // already-playing timeline (createIntroTimeline() memoizes the
         // timeline, not its content) - stacking a second, contradictory
-        // move-to-target after the first instead of replacing it. Once
-        // introPlayed flips true the branch above re-syncs everything to
-        // the current breakpoint anyway.
-        introQueuedRef.current = true;
+        // move-to-target after the first instead of replacing it.
+        //
+        // This is a GSAP-native check (via id) rather than a React ref,
+        // deliberately: a ref-based "only once" guard breaks under
+        // StrictMode's dev-mode double-invoke (mount -> cleanup -> mount) -
+        // the ref survives that cycle since it's tied to the fiber, not to
+        // an individual effect run, so the *real* second mount would see
+        // the guard already "consumed" by the throwaway first one and skip
+        // queuing the tween entirely, silently dropping the can's intro
+        // animation in dev. Checking the timeline's own state instead is
+        // correct either way: if useGSAP's context revert already killed
+        // the throwaway run's tween, this re-adds it fresh; if it didn't,
+        // this skips the duplicate.
+        if (!tl.getById("can1-intro-position")) {
+          gsap.set(can1Ref.current.position, {
+            ...config.introCan1.from.position,
+          });
+          gsap.set(can1Ref.current.scale, {
+            x: config.introCan1.from.scale,
+            y: config.introCan1.from.scale,
+            z: config.introCan1.from.scale,
+          });
 
-        gsap.set(can1Ref.current.position, {
-          ...config.introCan1.from.position,
-        });
-        gsap.set(can1Ref.current.scale, {
-          x: config.introCan1.from.scale,
-          y: config.introCan1.from.scale,
-          z: config.introCan1.from.scale,
-        });
+          tl.to(can1Ref.current.position, {
+            ...config.introCan1.to.position,
+            duration: 1,
+            ease: "back.out(1.4)",
+            id: "can1-intro-position",
+          });
+          if (config.introCan1.to.rotation) {
+            tl.to(
+              can1Ref.current.rotation,
+              {
+                ...config.introCan1.to.rotation,
+                duration: 1,
+                ease: "back.out(1.4)",
+              },
+              "<"
+            );
+          }
 
-        const tl = createIntroTimeline();
-        tl.to(can1Ref.current.position, {
-          ...config.introCan1.to.position,
-          duration: 1,
-          ease: "back.out(1.4)",
-        });
-        if (config.introCan1.to.rotation) {
-          tl.to(
-            can1Ref.current.rotation,
-            {
-              ...config.introCan1.to.rotation,
-              duration: 1,
-              ease: "back.out(1.4)",
-            },
-            "<"
-          );
+          // Bubbles only autostart the first time the intro actually plays
+          // - a return visit within the session skips straight to the
+          // resting state above and leaves them off until the user hits
+          // "Bulles".
+          tl.call(() => setBubblesPlaying(true));
         }
-
-        // Bubbles only autostart the first time the intro actually plays -
-        // a return visit within the session skips straight to the resting
-        // state above and leaves them off until the user hits "Bulles".
-        tl.call(() => setBubblesPlaying(true));
       }
 
       // The scroll scrub only gets built once can1's resting position is

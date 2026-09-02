@@ -1,6 +1,7 @@
 "use client";
 
 import { useEnvironment, useGLTF, useTexture } from "@react-three/drei";
+import { useThree } from "@react-three/fiber";
 import * as THREE from "three";
 
 // Preloading only matters for the browser - on the server this fetch is
@@ -37,6 +38,7 @@ export function SodaCan({
   ...props
 }: SodaCanProps) {
   const { nodes } = useGLTF("/Soda-can.gltf");
+  const { gl } = useThree();
 
   const labels = useTexture(flavorTextures);
 
@@ -44,6 +46,11 @@ export function SodaCan({
   Object.values(labels).forEach((texture) => {
     texture.flipY = false;
     texture.colorSpace = THREE.SRGBColorSpace;
+    // Default anisotropy (1, i.e. off) undersamples this label at the
+    // grazing angles the cylinder wrap constantly presents, which shows up
+    // as dark, blocky mip-level noise near the can's edges - most visible
+    // where it overlaps the z-fighting seam above.
+    texture.anisotropy = gl.capabilities.getMaxAnisotropy();
   });
 
   const label = labels[flavor];
@@ -66,7 +73,25 @@ export function SodaCan({
         receiveShadow
         geometry={(nodes.cylinder_1 as THREE.Mesh).geometry}
       >
-        <meshStandardMaterial roughness={0.7} metalness={0.1} map={label} />
+        {/* The label is a second, separate mesh laid directly over the can
+            body (only ~0.75% larger in radius) rather than baked into one
+            surface. At glancing angles - near the can's silhouette, or as
+            it rotates in FloatingCan's <Float> - that tiny gap falls
+            within the depth buffer's precision limit and the two meshes
+            z-fight, flickering between which one wins per-pixel: the
+            intermittent dashed/checkerboard-of-black-squares artifact
+            along the can's edge. polygonOffset nudges this mesh's
+            depth-buffer value slightly closer to the camera (independent
+            of its actual geometry) so it always wins the depth test
+            against the body underneath it. */}
+        <meshStandardMaterial
+          roughness={0.7}
+          metalness={0.1}
+          map={label}
+          polygonOffset
+          polygonOffsetFactor={-4}
+          polygonOffsetUnits={-4}
+        />
       </mesh>
       <mesh
         castShadow
