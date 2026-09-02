@@ -13,20 +13,18 @@ import { useResponsiveStore } from "@/store/useResponsiveStore";
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Text switches from a centered mobile stack to a left-aligned desktop
-// layout at xl: (see ProductLime.tsx) - the can needs to move out from
-// behind the centered text to sit beside it once that happens.
+// Mirrored from ProductCherry's x per breakpoint: this section's text is
+// right-aligned (centered on mobile, right-anchored from xl: - see
+// ProductLime.tsx), so the can sits slightly right of center below xl:
+// and fully on the left at xl:+, instead of Cherry's left/right.
 const CAN_LAYOUT_BY_BREAKPOINT: Record<
   Breakpoint,
   { scale: number; position: [number, number, number] }
 > = {
   xs: { scale: 0.65, position: [0, -0.4, 0] },
-  sm: { scale: 0.75, position: [-0.3, -0.4, 0] },
-  md: { scale: 0.75, position: [-0.3, -0.5, 0] },
-  lg: { scale: 0.75, position: [-0.3, -0.5, 0] },
-  // Mirrored from ProductCherry's xl/xxl x/y: this section's text sits on
-  // the right (see ProductLime.tsx's xl:justify-end), so the can needs to
-  // be on the left instead, at the same height as Cherry's.
+  sm: { scale: 0.75, position: [0.3, -0.4, 0] },
+  md: { scale: 0.75, position: [0.3, -0.5, 0] },
+  lg: { scale: 0.75, position: [0.3, -0.5, 0] },
   xl: { scale: 0.9, position: [-1.5, 0.35, 0] },
   xxl: { scale: 0.95, position: [-1.6, 0.35, 0] },
 };
