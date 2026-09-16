@@ -44,35 +44,43 @@ export default function ProductTitle({ name = "original" }: { name?: string }) {
       id="singleTtitle"
     >
       <div className="relative text-5xl tracking-wider sm:text-7xl lg:text-8xl">
-        <div className="text-secondary text-stroke-secondary-1 font-poppins absolute top-0 right-0 left-0 z-10 mx-auto w-fit uppercase opacity-100">
+        <h1 className="text-secondary text-stroke-secondary-1 font-poppins absolute top-0 right-0 left-0 z-10 mx-auto w-fit uppercase opacity-100">
           {name}
-        </div>
+        </h1>
+        {/* Decorative echo layers only — same text repeated for the stroke/depth
+            effect, not real content. aria-hidden keeps screen readers (and the
+            single real <h1> above) from reading "original" six times over. */}
         <div
           ref={ref1}
+          aria-hidden="true"
           className="text-stroke-secondary-1 text-primary font-poppins absolute top-0 right-0 left-0 mx-auto w-fit uppercase opacity-70"
         >
           {name}
         </div>
         <div
           ref={ref2}
+          aria-hidden="true"
           className="text-stroke-secondary-1 text-primary font-poppins absolute top-0 right-0 left-0 mx-auto w-fit uppercase opacity-50"
         >
           {name}
         </div>
         <div
           ref={ref3}
+          aria-hidden="true"
           className="text-stroke-secondary-1 text-primary font-poppins absolute top-0 right-0 left-0 mx-auto w-fit uppercase opacity-30"
         >
           {name}
         </div>
         <div
           ref={ref4}
+          aria-hidden="true"
           className="text-stroke-secondary-1 text-primary font-poppins absolute top-0 right-0 left-0 mx-auto w-fit uppercase opacity-10"
         >
           {name}
         </div>
         <div
           ref={ref5}
+          aria-hidden="true"
           className="text-stroke-secondary-1 text-primary font-poppins absolute top-0 right-0 left-0 mx-auto w-fit uppercase opacity-5"
         >
           {name}
