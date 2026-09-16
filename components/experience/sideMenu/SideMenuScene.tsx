@@ -1,10 +1,11 @@
 "use client";
 
+import { useFrame } from "@react-three/fiber";
 import gsap from "gsap";
 import { useEffect, useRef } from "react";
 import { Group } from "three";
 
-import { useSidebarCanStore } from "@/store/useMenuStore";
+import { useMenuStore, useSidebarCanStore } from "@/store/useMenuStore";
 
 import { CanLighting } from "../cans/CanLighting";
 import FloatingCan from "../cans/FloatingCan";
@@ -15,6 +16,7 @@ export default function SideMenuScene() {
   const containerRef = useRef<Group>(null);
 
   const activeCan = useSidebarCanStore((s) => s.activeCan);
+  const isMenuOpen = useMenuStore((s) => s.isMenuOpen);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -25,6 +27,17 @@ export default function SideMenuScene() {
       ease: "power4.out",
     });
   }, [activeCan]);
+
+  // Canvas runs frameloop="demand" (SideMenuCanvas.tsx). Every can here is
+  // wrapped in drei's <Float>, which animates continuously on its own
+  // internal useFrame for as long as it's mounted — there's no hook into
+  // that to invalidate only while it's actually moving. Gating on
+  // isMenuOpen instead of invalidating unconditionally is what actually
+  // saves anything: the canvas sits fully idle while the menu is closed
+  // (nearly always) instead of rendering forever for an off-screen scene.
+  useFrame(({ invalidate }) => {
+    if (isMenuOpen) invalidate();
+  });
 
   return (
     <>
