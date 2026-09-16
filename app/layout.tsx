@@ -82,6 +82,11 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Breizh Cola",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
