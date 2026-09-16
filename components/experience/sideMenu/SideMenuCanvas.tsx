@@ -33,6 +33,12 @@ export default function SideMenuCanvas() {
         pointerEvents: "none" as const,
       },
       dpr: [1, 1.5] as [number, number],
+      // This canvas stays mounted at all times — SideMenu.tsx only
+      // translates it off-screen via CSS when closed, it never unmounts.
+      // frameloop="demand" (paired with SideMenuScene's isMenuOpen-gated
+      // invalidate) keeps it fully idle while the menu is closed, instead
+      // of rendering continuously forever for a scene nobody can see.
+      frameloop: "demand" as const,
     }),
     []
   );
