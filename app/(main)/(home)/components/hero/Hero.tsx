@@ -60,7 +60,7 @@ export default function Hero() {
       </View>
 
       <div className="hero relative tracking-wider">
-        <div className="font-poppins text-secondary relative z-20 flex h-dvh w-full flex-col items-center p-4 pt-40 uppercase xl:items-start xl:justify-center 2xl:pl-24">
+        <h1 className="font-poppins text-secondary relative z-20 flex h-dvh w-full flex-col items-center p-4 pt-40 uppercase xl:items-start xl:justify-center 2xl:pl-24">
           {heroLines.map((line, i) => (
             <div
               key={i}
@@ -77,7 +77,7 @@ export default function Hero() {
               ))}
             </div>
           ))}
-        </div>
+        </h1>
       </div>
       <PinnedReveal className="text-xl" text={HERO_DESCRIPTION} />
     </div>
