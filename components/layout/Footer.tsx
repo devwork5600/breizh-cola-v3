@@ -1,4 +1,5 @@
 import { Copyright } from "lucide-react";
+import Link from "next/link";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -9,11 +10,19 @@ export default function Footer() {
       style={{ clipPath: "polygon(0% 0, 100% 0%, 100% 100%, 0 100%)" }}
     >
       <div className="fixed bottom-0 flex h-25 w-full items-center justify-between px-4">
-        <div className="flex items-center">
-          <Copyright strokeWidth={1.5} />
-          <span className="text-md pl-1 font-semibold capitalize xl:text-xl">
-            copyright {currentYear}
-          </span>
+        <div className="flex flex-col">
+          <div className="flex items-center">
+            <Copyright strokeWidth={1.5} />
+            <span className="text-md pl-1 font-semibold capitalize xl:text-xl">
+              copyright {currentYear}
+            </span>
+          </div>
+          <Link
+            href="/mentions-legales"
+            className="pl-1 text-xs underline-offset-2 hover:underline"
+          >
+            Mentions légales
+          </Link>
         </div>
 
         <span className="font-cream-cake text-right text-3xl capitalize sm:text-4xl 2xl:text-5xl">
